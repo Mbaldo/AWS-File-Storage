@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+</head>
+<body>
+  <h2>🔐 Login</h2>
+  <form id="loginForm">
+    <input name="username" placeholder="Username" required><br>
+    <input name="password" type="password" placeholder="Password" required><br><br>
+    <button type="submit">Login</button>
+  </form>
+  <p><a href="/register.html">Need an account? Register</a></p>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const body = {
+        username: form.username.value,
+        password: form.password.value
+      };
+
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        const { token } = await res.json();
+        localStorage.setItem('token', token);
+        alert('✅ Logged in!');
+        window.location.href = '/';
+      } else {
+        alert('❌ ' + await res.text());
+      }
+    });
+  </script>
+</body>
+</html>

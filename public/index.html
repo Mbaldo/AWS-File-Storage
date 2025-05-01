@@ -1,13 +1,121 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Upload to AWS S3</title>
+  <title>Secure File Upload</title>
 </head>
 <body>
-  <h2>Secure File Upload</h2>
-  <form action="/upload" method="POST" enctype="multipart/form-data">
+  <h2>📁 Secure File Upload</h2>
+
+  <button onclick="logout()">🚪 Logout</button>
+
+  <form id="uploadForm" enctype="multipart/form-data">
     <input type="file" name="file" required />
     <button type="submit">Upload</button>
   </form>
+
+<hr>
+<h3>📂 Uploaded Files</h3>
+<ul id="fileList"></ul>
+
+<script>
+  function parseJwt(token) {
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+      return {};
+    }
+  }
+
+  async function loadFiles() {
+    const token = localStorage.getItem('token');
+    const user = parseJwt(token);
+
+    const res = await fetch('/files', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+
+    const list = document.getElementById('fileList');
+
+    if (!res.ok) {
+      list.innerHTML = '<li>❌ Unauthorized</li>';
+      return;
+    }
+
+    const files = await res.json();
+    list.innerHTML = '';
+
+    if (files.length === 0) {
+      list.innerHTML = '<li>No files found.</li>';
+      return;
+    }
+
+    for (const file of files) {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <a href="${file.url}" target="_blank">${file.key}</a>
+        ${user.role === 'admin' ? `<button onclick="deleteFile('${file.key}')">🗑️ Delete</button>` : ''}
+      `;
+      list.appendChild(li);
+    }
+  }
+
+  loadFiles();
+</script>
+
+
+
+  <script>
+    // Upload with auth
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = localStorage.getItem('token');
+      if (!token) return alert('❌ You must be logged in.');
+
+      const formData = new FormData(e.target);
+      const res = await fetch('/upload', {
+        method: 'POST',
+        body: formData,
+        headers: { Authorization: 'Bearer ' + token }
+      });
+
+      if (res.ok) {
+        alert('✅ Upload successful!');
+        loadFiles(); // refresh file list
+      } else {
+        alert('❌ Upload failed.');
+      }
+
+    });
+
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = '/login.html';
+    }
+
+    // Redirect if not logged in
+    if (!localStorage.getItem('token')) {
+      window.location.href = '/login.html';
+    }
+  </script>
+
+  <script>
+    async function deleteFile(fileKey) {
+      const token = localStorage.getItem('token');
+      if (!token) return alert('You must be logged in.');
+
+      const res = await fetch(`/delete?key=${encodeURIComponent(fileKey)}`, {
+        method: 'DELETE',
+        headers: { Authorization: 'Bearer ' + token }
+      });
+
+      if (res.ok) {
+        alert('✅ File deleted');
+        loadFiles(); // refresh list
+      } else {
+        alert('❌ Delete failed');
+      }
+    }
+  </script>
+
 </body>
 </html>
