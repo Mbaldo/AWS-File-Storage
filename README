@@ -21,6 +21,17 @@ This project is a secure, role-based file storage platform built using **Node.js
 - bcrypt for password hashing
 - dotenv for environment config
 
+## 📁 RESTful API Endpoints
+
+| Method | Endpoint      | Description                          | Auth Required |
+|--------|---------------|--------------------------------------|---------------|
+| POST   | `/register`   | Register a new user                  | ❌            |
+| POST   | `/login`      | Authenticate and return JWT          | ❌            |
+| POST   | `/upload`     | Upload file to S3                    | ✅            |
+| GET    | `/files`      | List user/admin files                | ✅            |
+| GET    | `/download`   | Get pre-signed download link         | ✅            |
+| DELETE | `/delete`     | Delete file (admin only)             | ✅ (admin)    |
+
 ## Getting Started
 
 ### 1. Clone the repository
