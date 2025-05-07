@@ -1,0 +1,85 @@
+# Secure Cloud-Based File Storage System
+
+This project is a secure, role-based file storage platform built using **Node.js**, **Express**, and **AWS S3**. It supports user authentication with JWT, file uploads with encrypted storage, secure downloads via pre-signed URLs, and admin-only file deletion.
+
+## Features
+
+- 🔐 **User Authentication** (JWT, bcrypt)
+- 🧾 **Role-Based Access** (`admin`, `user`)
+- ☁️ **AWS S3 File Uploads** (AES-256 encryption)
+- 🔗 **Pre-Signed Download URLs**
+- 🗑️ **Admin-Only File Deletion**
+- 📃 **User-Specific File Listing**
+- 🖥️ **Frontend Interface** with upload form and download links
+
+## Technologies
+
+- Node.js + Express
+- AWS SDK for JavaScript (S3)
+- JSON Web Tokens (JWT)
+- Multer (memory storage)
+- bcrypt for password hashing
+- dotenv for environment config
+
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Mbaldo/AWS-File-Storage
+cd aws-file-storage
+```
+
+### 2. Setup Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+AWS_ACCESS_KEY=your_access_key
+AWS_SECRET=your_secret_key
+AWS_REGION=your_region
+S3_BUCKET=your_bucket_name
+JWT_SECRET=your_jwt_secret
+```
+
+### 3. Install dependencies
+
+```bash
+npm install
+```
+
+### 4. Start the server
+
+```bash
+node server.js
+```
+
+Visit `http://localhost:3000` in your browser.
+
+## File Structure
+
+- `server.js` - Main backend logic
+- `public/` - Frontend HTML, JS
+- `users.json` - Stores registered users (ignored in Git)
+- `.env` - Stores sensitive config (ignored in Git)
+
+## Security Practices
+
+- All credentials stored in `.env` (gitignored)
+- Passwords hashed with bcrypt
+- JWT tokens used for protected routes
+- Admin-only deletion enforced via middleware
+- Bucket access restricted to backend only
+
+## Future Enhancements
+
+- Deployment to Vercel or AWS EC2
+- Use DynamoDB for file metadata
+- Add user storage quotas
+- UI improvements and file previews
+
+---
+
+**Authors:**  
+Michael Baldo, Anthony Lapan  
+California State University, Fullerton – Spring 2025
